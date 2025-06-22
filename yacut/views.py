@@ -9,6 +9,7 @@ from . import app, db
 from .forms import UploadForm, URLForm
 from .models import URLMap
 from .settings import MAX_RETRY_FOR_SHORT_ID_GENERATION, SHORT_URL_ID_LENGTH
+from .validators import valid_short_id
 from .yandex_disk import upload_multiple_files
 
 CHARACTERS = string.ascii_letters + string.digits
@@ -36,10 +37,10 @@ def index_view():
     if form.validate_on_submit():
         if form.custom_id.data:
             short_id = form.custom_id.data
-            if short_id == 'files':
-                flash('Сочетание "files" занято.', 'error')
+            if not valid_short_id(short_id):
+                flash('Указано недопустимое имя для короткой ссылки', 'error')
                 return render_template('index.html', form=form)
-            elif not short_id_available(short_id):
+            elif short_id == 'files' or not short_id_available(short_id):
                 flash('Предложенный вариант короткой ссылки уже существует.',
                       'error')
                 return render_template('index.html', form=form)
@@ -53,7 +54,7 @@ def index_view():
     return render_template('index.html', form=form)
 
 
-@app.route('/files/', methods=['GET', 'POST'])
+@app.route('/files', methods=['GET', 'POST'])
 async def upload_view():
     form = UploadForm()
     if form.validate_on_submit():
@@ -75,7 +76,7 @@ async def upload_view():
     return render_template('upload.html', form=form)
 
 
-@app.route('/<re("[A-Za-z0-9]{1,16}"):short_id>/')
+@app.route('/<re("[A-Za-z0-9]{1,16}"):short_id>')
 async def short_link_redirect_view(short_id):
     url_map = URLMap.query.filter_by(short=short_id).first()
     if url_map is not None:
