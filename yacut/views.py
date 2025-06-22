@@ -95,7 +95,8 @@ async def short_link_redirect_view(short_id):
                                 'Content-Type', 'application/octet-stream'
                             ),
                             'Content-Disposition':
-                            f'attachment; filename="{filename}"'
+                            'attachment; '
+                            f'filename="{filename}"'
                         }
             except ClientResponseError:
                 abort(500)

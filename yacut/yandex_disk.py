@@ -8,7 +8,8 @@ from .settings import AUTH_HEADERS, DOWNLOAD_LINK_URL, REQUEST_UPLOAD_URL
 
 
 async def _get_upload_url(session: ClientSession, filename: str) -> str:
-    payload = {'path': f'app:/{filename}', 'overwrite': 'True'}
+    payload = {'path': 'app:'  # flake8 требует пробел после двоеточия
+               f'/{filename}', 'overwrite': 'True'}
     async with session.get(
         headers=AUTH_HEADERS,
         params=payload,
