@@ -1,0 +1,67 @@
+{% extends "base.html" %} 
+{% block title %}YaCut - хранилище файлов{%endblock %} 
+{% block content %}
+  <main>
+    <section class="container my-5 px-4">
+      <h1 class="text-center"><span style="color:red">Ya</span>Cut</h1>
+      <p class="text-center my-4">
+        Загрузите файлы и получите на них короткие ссылки
+      </p>
+
+      <div class="container">
+        <div class="row my-3">
+          <div class="col-sm">
+          </div>
+          <div class="col-sm">
+            <form method="POST" novalidate enctype="multipart/form-data">
+              {{ form.csrf_token }}
+              {{ form.files(class="form-control form-control-lg py-2 mb-3", placeholder="Файл не выбран") }}
+              {% if form.files.errors %}
+                <p class="text-danger">
+                  {% for error in form.files.errors %}
+                    {{ error }}
+                  {% endfor %}
+                </p>
+              {% endif %}
+              {% with messages = get_flashed_messages(category_filter=["error"]) %}
+                {% if messages %}
+                    {% for message in messages %}
+                      <p><span style="color:red">{{ message }}</span></p>
+                    {% endfor %}
+                {% endif %}
+              {% endwith %}
+              {{ form.submit(class="btn btn-primary") }}
+            </form>
+          </div>
+          <div class="col-sm">
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        {% with messages = get_flashed_messages(category_filter=["info"]) %}
+          {% if messages %}
+            {% for item in messages %}
+            <div class="row ">
+              <div class="col-sm">
+              </div>
+              <div class="col-sm p-0">
+                <p>{{ item[0] }}</p>
+              <hr>
+              </div>
+              <div class="col-sm p-0">
+                <p>
+                  <a href="{{ item[1] }}">{{ item[1] }}</a>
+                </p>
+                <hr>
+              </div>
+              <div class="col-sm">
+              </div>
+            </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+      </div>
+
+    </section>
+  </main>
+{% endblock content %}
