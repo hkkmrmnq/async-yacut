@@ -11,7 +11,7 @@ async def _get_upload_link(
         session: aiohttp.ClientSession, filename: str
 ) -> str:
     # flake8: noqa: <CODE>
-    payload = {'path': 'app:/{filename}', 'overwrite': 'True'}
+    payload = {'path': f'app:/{filename}', 'overwrite': 'True'}
     async with session.get(
         headers=AUTH_HEADERS,
         params=payload,
