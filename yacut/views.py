@@ -1,7 +1,7 @@
 import random
 import string
 
-from aiohttp import ClientResponseError, ClientSession
+import aiohttp
 from flask import Response, abort, flash, redirect, render_template, request
 from urllib.parse import parse_qs, urlparse
 
@@ -60,7 +60,7 @@ async def upload_view():
     if form.validate_on_submit():
         try:
             uploaded = await upload_multiple_files(form.files.data)
-        except ClientResponseError:
+        except aiohttp.ClientResponseError:
             abort(500)
         url_maps = [
             URLMap(
@@ -86,7 +86,9 @@ async def short_link_redirect_view(short_id):
             query_params = parse_qs(parsed_url.query)
             filename = query_params.get('filename', [f'{short_id}.bin'])[0]
             try:
-                async with ClientSession(raise_for_status=True) as session:
+                async with aiohttp.ClientSession(
+                    raise_for_status=True
+                ) as session:
                     async with session.get(url_map.original) as response:
                         content = await response.read()
                         headers = {
@@ -98,7 +100,7 @@ async def short_link_redirect_view(short_id):
                             'attachment; '
                             f'filename="{filename}"'
                         }
-            except ClientResponseError:
+            except aiohttp.ClientResponseError:
                 abort(500)
             return Response(content, headers=headers)
         return redirect(url_map.original)

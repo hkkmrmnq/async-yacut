@@ -1,15 +1,17 @@
 import asyncio
 import urllib
 
-from aiohttp import ClientSession
+import aiohttp
 from werkzeug.datastructures import FileStorage
 
 from .settings import AUTH_HEADERS, DOWNLOAD_LINK_URL, REQUEST_UPLOAD_URL
 
 
-async def _get_upload_url(session: ClientSession, filename: str) -> str:
-    payload = {'path': 'app:'  # flake8 требует пробел после двоеточия
-               f'/{filename}', 'overwrite': 'True'}
+async def _get_upload_link(
+        session: aiohttp.ClientSession, filename: str
+) -> str:
+    # flake8: noqa: <CODE>
+    payload = {'path': 'app:/{filename}', 'overwrite': 'True'}
     async with session.get(
         headers=AUTH_HEADERS,
         params=payload,
@@ -20,7 +22,7 @@ async def _get_upload_url(session: ClientSession, filename: str) -> str:
 
 
 async def _upload_file(
-        session: ClientSession, file: FileStorage, upload_url: str
+        session: aiohttp.ClientSession, file: FileStorage, upload_url: str
 ) -> str:
     file_data = file.read()
     async with session.put(
@@ -32,7 +34,9 @@ async def _upload_file(
         return location.replace('/disk', '')
 
 
-async def _get_download_link(session: ClientSession, location: str) -> str:
+async def _get_download_link(
+        session: aiohttp.ClientSession, location: str
+) -> str:
     async with session.get(
         headers=AUTH_HEADERS,
         url=DOWNLOAD_LINK_URL,
@@ -43,9 +47,9 @@ async def _get_download_link(session: ClientSession, location: str) -> str:
 
 
 async def upload_one_file(
-        session: ClientSession, file_data: FileStorage
+        session: aiohttp.ClientSession, file_data: FileStorage
 ) -> dict[str, str]:
-    upload_url = await _get_upload_url(session, file_data.filename)
+    upload_url = await _get_upload_link(session, file_data.filename)
     location = await _upload_file(session, file_data, upload_url)
     download_link = await _get_download_link(session, location)
     result = {'filename': file_data.filename, 'download_link': download_link}
@@ -55,7 +59,7 @@ async def upload_one_file(
 async def upload_multiple_files(
         files_data: list[FileStorage]
 ) -> list[dict[str, str]]:
-    async with ClientSession(raise_for_status=True) as session:
+    async with aiohttp.ClientSession(raise_for_status=True) as session:
         tasks = [upload_one_file(session, file) for file in files_data]
         results = await asyncio.gather(*tasks)
     return results
