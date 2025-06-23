@@ -22,7 +22,7 @@ def short_id_available(short_id: str) -> bool:
     return False
 
 
-def get_unique_short_id() -> str | None:
+def get_unique_short_id():
     """Генерирует идентификатор для коротких ссылок."""
     for _ in range(MAX_RETRY_FOR_SHORT_ID_GENERATION):
         short_id = "".join(random.choices(CHARACTERS, k=SHORT_URL_ID_LENGTH))
