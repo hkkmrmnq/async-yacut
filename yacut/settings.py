@@ -5,6 +5,11 @@ from dotenv import load_dotenv
 SHORT_URL_ID_LENGTH = 6
 MAX_RETRY_FOR_SHORT_ID_GENERATION = 10
 
+URL_MAX_LENGTH = 2048
+SHORT_ID_MAX_LENGTH = 16
+
+SHORT_ID_PATTERN = rf'^[A-Za-z0-9]{{1,{SHORT_ID_MAX_LENGTH}}}$'
+
 # yandex disk
 API_HOST = 'https://cloud-api.yandex.net/'
 API_VERSION = 'v1'

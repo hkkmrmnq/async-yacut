@@ -3,6 +3,18 @@ from flask import jsonify, render_template
 from . import app, db
 
 
+class UnexpectedBehavior(Exception):
+    pass
+
+
+class ShortIDException(Exception):
+    pass
+
+
+class NotFound(Exception):
+    pass
+
+
 class APIException(Exception):
     status_code = 400
 
