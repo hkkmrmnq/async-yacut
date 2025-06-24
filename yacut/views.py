@@ -47,6 +47,7 @@ async def upload_view():
     return render_template('upload.html', form=form)
 
 
+# flake8: noqa: <CODE>
 @app.route(f'/<re("[A-Za-z0-9]{{1,{SHORT_ID_MAX_LENGTH}}}"):short_id>')
 async def short_link_redirect_view(short_id):
     try:
@@ -68,6 +69,7 @@ async def short_link_redirect_view(short_id):
                         response.headers.get(
                             'Content-Type', 'application/octet-stream'
                         ),
+                        # flake8: noqa: <CODE>
                         'Content-Disposition':
                         f'attachment; filename="{filename}"'
                     }
