@@ -31,12 +31,14 @@ class URLMap(db.Model):
 
     @classmethod
     def create(cls, original, short=None):
-        if short is not None:
+        if short:
             if not re.match(SHORT_ID_PATTERN, short):
                 raise ShortIDException(
                     'Указано недопустимое имя для короткой ссылки'
                 )
-            if cls.query.filter_by(short=short).first() is not None:
+            if short == 'files' or cls.query.filter_by(
+                short=short
+            ).first() is not None:
                 raise ShortIDException(
                     'Предложенный вариант короткой ссылки уже существует.'
                 )

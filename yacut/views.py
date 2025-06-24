@@ -23,8 +23,9 @@ def index_view():
             flash(error, 'error')
         except UnexpectedBehavior:
             abort(500)
-        flash('Ваша новая ссылка готова:', 'info')
-        flash(f'{request.url_root}{url_map.short}', 'url')
+        else:
+            flash('Ваша новая ссылка готова:', 'info')
+            flash(f'{request.url_root}{url_map.short}', 'url')
     return render_template('index.html', form=form)
 
 
